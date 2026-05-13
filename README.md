@@ -1,36 +1,144 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 보름 (Borum) — 독서 모임 플랫폼
 
-## Getting Started
+**YoungCoreCrew (YCC)** 팀이 개발하는 청년 중심 독서 모임 플랫폼.  
+'보름달'처럼 한 달에 한 번 온전히 차오르는 독서와 사유의 공간을 지향합니다.  
+STS(과학기술과 사회) 관점의 독서 공동체 플랫폼입니다.
 
-First, run the development server:
+---
+
+## 기술 스택
+
+| 역할 | 기술 |
+|------|------|
+| 프론트엔드 | Next.js 14 + TypeScript (App Router) |
+| 스타일링 | Tailwind CSS (민트 #1D9E75 테마) |
+| 백엔드 | Next.js API Routes |
+| 데이터베이스 | Supabase (PostgreSQL + pgvector) |
+| 인증 | Supabase Auth (소셜 로그인) |
+| AI 엔진 | Claude API (claude-sonnet) |
+| 임베딩 | voyage-3 (Anthropic) |
+| 시각화 | D3.js |
+| 배포 | Vercel |
+
+---
+
+## 현재 구현 상태
+
+랜딩 페이지 컴포넌트 구현 완료:
+
+- `Navbar` — 고정 헤더, 모바일 반응형
+- `HeroSection` — 별밭 + 보름달 애니메이션
+- `CurrentBookSection` — 이번 달 책 + 토론 주제
+- `ReviewsSection` — 독서 감상 카드
+- `ScheduleSection` — 모임 일정 목록
+- `MembersSection` — 멤버 프로필 그리드
+- `Footer` — 지난 도서 아카이브
+
+---
+
+## 추가 예정 기능
+
+### MVP (1~2개월)
+
+**사용자 · 계정**
+- [ ] 회원가입 / 로그인 (이메일, 구글·카카오 소셜 로그인)
+- [ ] 프로필 관리 (독서 이력, 관심 장르, 한 줄 소개)
+- [ ] 독서 상태 트래킹 (읽는 중 / 읽음 / 읽고 싶음)
+
+**모임 개설 · 관리**
+- [ ] 모임 생성 (책 선정, 모임 소개, 인원 제한)
+- [ ] 초대 및 멤버 관리 (링크 초대, 공개·비공개 설정)
+- [ ] 모임 피드 (멤버 활동 타임라인)
+
+**감상 · 소통**
+- [ ] 감상문 작성 (마크다운 에디터, 공개·멤버 전용 설정)
+- [ ] 인용구 저장 (페이지·챕터 위치 태깅)
+- [ ] 댓글 · 리액션
+
+---
+
+### Phase 2 (3~4개월)
+
+**도서 관리**
+- [ ] 책 등록 / 검색 (ISBN 기반 국립중앙도서관 API 연동)
+- [ ] 읽기 진행률 및 완독 날짜 기록
+- [ ] 모임별 도서 히스토리 아카이브
+
+**일정 · 알림**
+- [ ] 모임 일정 등록 (오프라인/온라인)
+- [ ] 구글 캘린더 내보내기
+- [ ] D-3 / 당일 모임 푸시 알림
+- [ ] 댓글·감상 새 활동 알림
+- [ ] 멘션(@) · 1:1 DM
+
+**독서 통계**
+- [ ] 월별 완독 수 · 누적 독서량 차트
+- [ ] 연간 독서 목표 및 달성률 트래킹
+- [ ] 장르 분포 파이 차트
+
+**탐색 · 추천**
+- [ ] 관심사 기반 공개 모임 탐색
+- [ ] 플랫폼 전체 감상·인용구 탐색 피드
+- [ ] 주간 독서 활동 이메일 뉴스레터
+
+---
+
+### Phase 3 — Claude API 연동 (5~6개월)
+
+**토론 점화 질문 생성기**
+- [ ] 책의 핵심 긴장을 분석한 개방형 논쟁 질문 3개 자동 생성
+- [ ] 멤버 이전 감상 참고한 개인화 질문
+- [ ] 책 내용과 현실 사회·기술 이슈 연결 질문
+
+**감상문 깊이 확장 코치**
+- [ ] 짧은 감상에 소크라테스식 심화 질문 제안
+- [ ] 비공개 AI 글쓰기 코칭 모드
+- [ ] 키워드 입력 시 감상문 구조 초안 보조
+
+**모임 서기 — 토론 자동 요약**
+- [ ] 핵심 논점 추출 (가장 많이 언급된 주제 분류)
+- [ ] 합의점 · 불일치 지점 정리
+- [ ] 이번 토론 기반 다음 책 제안
+
+---
+
+### Phase 4 — AI 고도화 (7~9개월)
+
+**달빛 큐레이터 — STS 렌즈 북 매칭**
+- [ ] 감상 텍스트 분석 후 STS 관점 도서 추천
+- [ ] 이전에 읽은 책들의 흐름에서 다음 책 제안
+- [ ] 모임 누적 독서 패턴 기반 모임 큐레이션
+
+**책 속 맥락 연결망**
+- [ ] voyage-3 임베딩으로 의미 유사 인용구 매칭
+- [ ] 다른 책의 인용구와 크로스 도서 연결
+- [ ] 비슷한 구절에 반응한 공명 멤버 탐색
+
+**STS 독서 지도 시각화**
+- [ ] 감상 텍스트 AI 주제 클러스터링 (k-means / UMAP)
+- [ ] D3.js force-directed 그래프 인터랙티브 시각화
+- [ ] Claude API 기반 클러스터 STS 레이블 자동 명명
+- [ ] 주제 클러스터 필터링 및 크로스 클러스터 연결선
+
+---
+
+## 로컬 개발 실행
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) 에서 확인
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 브랜드 가이드
 
-## Learn More
+- **대표색**: 민트 `#1D9E75`
+- **모티브**: 보름달 — 한 달에 한 번 차오르는 독서와 사유
+- **관점**: STS(과학기술과 사회) — AI 시대 인문학적 독서의 가치 강조
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*YCC · YoungCoreCrew | 보름(Borum)*
