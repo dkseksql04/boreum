@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --mint: #2DD4BF;
-  --mint-50: #F0FDFB;
-  --mint-100: #CCFBF1;
-  --mint-200: #99F6E4;
-  --mint-600: #0D9488;
-  --mint-700: #0F766E;
-  --background: #F7FAFA;
+  --mint: #BDF1E7;
+  --mint-50: #F2FCFA;
+  --mint-100: #E1FAF5;
+  --mint-200: #BDF1E7;
+  --mint-600: #1E9E8B;
+  --mint-700: #197E6F;
+  --background: #BDF1E7; /* Representative brand color as solid background */
   --surface: #FFFFFF;
-  --foreground: #1A2E2B;
-  --muted: #7A9E99;
-  --border: #E2F0EE;
+  --foreground: #142825;
+  --muted: #557A74;
+  --border: #DFF7F3;
 }
 
 @theme inline {
@@ -20,6 +20,19 @@
   --color-surface: var(--surface);
   --color-mint: var(--mint);
   --color-muted: var(--muted);
+  
+  --color-teal-50: #F2FCFA;
+  --color-teal-100: #E1FAF5;
+  --color-teal-200: #BDF1E7;
+  --color-teal-300: #8EE6D6;
+  --color-teal-400: #55D2BE;
+  --color-teal-500: #28BCA6;
+  --color-teal-600: #1E9E8B;
+  --color-teal-700: #197E6F;
+  --color-teal-800: #156358;
+  --color-teal-900: #125249;
+  --color-teal-950: #08302A;
+
   --font-serif: "Noto Serif KR", Georgia, serif;
   --font-sans: "Pretendard", "Apple SD Gothic Neo", sans-serif;
 }
@@ -34,23 +47,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-@keyframes moonFloat {
-  0%, 100% { transform: translateY(0px) rotate(-2deg); }
-  50% { transform: translateY(-10px) rotate(2deg); }
-}
-
-@keyframes glowPulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.05); }
-}
-
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-.moon-float { animation: moonFloat 7s ease-in-out infinite; }
-.glow-pulse { animation: glowPulse 4s ease-in-out infinite; }
 
 .fade-up { animation: fadeInUp 0.6s ease-out forwards; }
 .delay-1 { animation-delay: 0.1s; opacity: 0; }
@@ -65,5 +65,5 @@ body {
 }
 
 ::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: #F0FDFB; }
-::-webkit-scrollbar-thumb { background: #2DD4BF; border-radius: 3px; }
+::-webkit-scrollbar-track { background: #F2FCFA; }
+::-webkit-scrollbar-thumb { background: #55D2BE; border-radius: 3px; }
