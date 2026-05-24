@@ -18,21 +18,7 @@ export default function HeroSection() {
       {/* 제 1페이지: Entrance Cover Screen (보그 코리아 벤치마킹 초대형 로고 및 배너) */}
       {/* ========================================================================= */}
       <section className="relative min-h-screen w-full flex flex-col items-center justify-center pt-52 pb-24 px-8 overflow-hidden select-none">
-        {/* 1. 초대형 브랜드 로고 (Vogue Header Style Centered) */}
-        <div className="relative flex items-center h-28 group pl-7 select-none scale-[1.5] md:scale-[1.8] mb-12 transition-transform duration-500 z-10">
-          {/* Logo Circle Outline */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full border border-black transition-transform duration-700 group-hover:rotate-45" />
-          {/* Serif Logo Text with Mint-shadow mask */}
-          <span
-            className="relative z-10 text-5xl font-bold text-black tracking-tight font-serif pl-7"
-            style={{ 
-              fontFamily: "var(--font-serif), serif",
-              textShadow: "0 0 8px #BDF1E7, -3px -3px 0 #BDF1E7, 3px -3px 0 #BDF1E7, -3px 3px 0 #BDF1E7, 3px 3px 0 #BDF1E7, -5px 0 0 #BDF1E7, 5px 0 0 #BDF1E7, 0 -5px 0 #BDF1E7, 0 5px 0 #BDF1E7" 
-            }}
-          >
-            Boreum
-          </span>
-        </div>
+
 
         {/* 2. 초대형 매거진 에디토리얼 프레임 배너 */}
         <div className="w-full max-w-6xl h-[420px] bg-white border border-black/15 overflow-hidden relative flex flex-col justify-between p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.04)] rounded-none z-10">
@@ -144,26 +130,7 @@ export default function HeroSection() {
         {/* Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-8 w-full">
           <div className="max-w-2xl">
-            {/* Vector Brand Logo, drawn exactly as in logo.jpg (SM style layout) */}
-            <div className="fade-up flex items-center h-16 group relative pl-3.5 mb-10 select-none">
-              {/* The thin outline circle of the logo */}
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full border border-black transition-transform duration-700 group-hover:rotate-45" />
-              {/* The serif text "Boreum" */}
-              <span
-                className="relative z-10 text-4xl md:text-5xl font-bold text-black tracking-tight font-serif pl-5"
-                style={{ 
-                  fontFamily: "var(--font-serif), serif",
-                  textShadow: "0 0 8px #BDF1E7, -3px -3px 0 #BDF1E7, 3px -3px 0 #BDF1E7, -3px 3px 0 #BDF1E7, 3px 3px 0 #BDF1E7, -5px 0 0 #BDF1E7, 5px 0 0 #BDF1E7, 0 -5px 0 #BDF1E7, 0 5px 0 #BDF1E7"
-                }}
-              >
-                Boreum
-              </span>
-              {/* Elegant vertical separation line and sub-logo name, SM style */}
-              <div className="h-8 w-[1px] bg-black/20 ml-6 mr-5" />
-              <span className="text-xs font-bold text-black/50 tracking-[0.4em] uppercase pt-1">
-                보름
-              </span>
-            </div>
+
 
             {/* Slogan Typography Title */}
             <div className="fade-up delay-1 mb-8">
