@@ -1,29 +1,42 @@
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-[#BDF1E7] pt-20">
-      {/* Giant book- & moon-based cropped abstract graphic asset (SM style) */}
-      <div className="absolute right-[-20vw] bottom-[-20vw] w-[80vw] h-[80vw] max-w-[900px] max-h-[900px] rounded-full border-[1.5px] border-black bg-[#F8FAFC] shadow-[0_20px_60px_rgba(0,0,0,0.06)] pointer-events-none z-0 overflow-hidden p-[8%]">
-        <svg viewBox="0 0 500 500" className="w-full h-full text-black stroke-black fill-none opacity-85">
-          {/* Spine/Center axis of the open book */}
-          <line x1="250" y1="440" x2="250" y2="60" stroke="black" strokeWidth="1.5" strokeDasharray="3 3" />
-          
-          {/* Left Wing Pages (multiple thin sweeping lines) */}
-          <path d="M 250,440 C 170,390 60,300 60,160" stroke="black" strokeWidth="1" />
-          <path d="M 250,440 C 185,370 80,280 80,140" stroke="black" strokeWidth="1" />
-          <path d="M 250,440 C 200,350 100,260 100,120" stroke="black" strokeWidth="1.2" />
-          <path d="M 250,440 C 215,330 120,240 120,100" stroke="black" strokeWidth="1.2" />
-          <path d="M 250,440 C 230,310 140,220 140,80" stroke="black" strokeWidth="1.5" />
-          
-          {/* Right Wing Pages (multiple thin sweeping lines) */}
-          <path d="M 250,440 C 330,390 440,300 440,160" stroke="black" strokeWidth="1" />
-          <path d="M 250,440 C 315,370 420,280 420,140" stroke="black" strokeWidth="1" />
-          <path d="M 250,440 C 300,350 400,260 400,120" stroke="black" strokeWidth="1.2" />
-          <path d="M 250,440 C 285,330 380,240 380,100" stroke="black" strokeWidth="1.2" />
-          <path d="M 250,440 C 270,310 360,220 360,80" stroke="black" strokeWidth="1.5" />
+      {/* Giant book line graphic with architectural grid lines (SM Style) */}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[90vw] md:w-[50vw] h-[75vh] max-w-[800px] z-0 pointer-events-none flex items-center justify-end pr-8 md:pr-16">
+        {/* Structural Grid lines crossing the screen */}
+        <div className="absolute top-0 bottom-0 left-0 w-[1px] bg-black/10 hidden md:block" />
+        <div className="absolute left-[-20vw] right-0 bottom-1/4 h-[1px] bg-black/10 hidden md:block" />
+        <div className="absolute left-[-10vw] right-0 top-1/4 h-[1px] bg-black/10 hidden md:block" />
 
-          {/* Book bottom & top connecting flow lines */}
-          <path d="M 60,160 C 120,200 180,180 250,80 C 320,180 380,200 440,160" stroke="black" strokeWidth="1" strokeDasharray="2 2" />
-          <path d="M 60,160 L 440,160" stroke="black" strokeWidth="0.5" strokeDasharray="4 4" />
+        {/* The open book outline SVG (recreating user reference exactly in black lines) */}
+        <svg viewBox="0 0 600 600" className="w-full h-full text-black stroke-black fill-none opacity-85 scale-[1.1] origin-right">
+          {/* Outer Layer of Pages (3D effect background page borders) */}
+          {/* Left Outer Page */}
+          <path d="M 300,105 C 230,85 150,95 90,115 L 90,495 C 150,475 230,465 300,485 Z" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Right Outer Page */}
+          <path d="M 300,105 C 370,85 450,95 510,115 L 510,495 C 450,475 370,465 300,485 Z" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+
+          {/* Inner Layer of Pages (Main open pages) */}
+          {/* Left Inner Page */}
+          <path d="M 300,135 C 240,115 170,125 110,145 L 110,465 C 170,445 240,435 300,455 Z" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Right Inner Page */}
+          <path d="M 300,135 C 360,115 430,125 490,145 L 490,465 C 430,445 360,435 300,455 Z" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+
+          {/* Spine Center Axis Lines */}
+          <line x1="300" y1="135" x2="300" y2="455" stroke="black" strokeWidth="2" />
+          <line x1="300" y1="105" x2="300" y2="485" stroke="black" strokeWidth="1" strokeDasharray="3 3" />
+
+          {/* Text Line Placeholders on Left Page (4 curved horizontal lines) */}
+          <path d="M 160,220 C 200,205 230,200 255,208" stroke="black" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 160,265 C 200,250 230,245 255,253" stroke="black" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 160,310 C 200,295 230,290 255,298" stroke="black" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 160,355 C 200,340 230,335 255,343" stroke="black" strokeWidth="2" strokeLinecap="round" />
+
+          {/* Text Line Placeholders on Right Page (4 curved horizontal lines) */}
+          <path d="M 345,208 C 370,200 400,205 440,220" stroke="black" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 345,253 C 370,245 400,250 440,265" stroke="black" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 345,298 C 370,290 400,295 440,310" stroke="black" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 345,343 C 370,335 400,340 440,355" stroke="black" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </div>
 
