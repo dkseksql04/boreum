@@ -1,10 +1,30 @@
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-[#BDF1E7] pt-20">
-      {/* Giant logo-based cropped thin circle graphic (moon silhouette) */}
-      <div className="absolute right-[-25vw] bottom-[-25vw] w-[85vw] h-[85vw] max-w-[1000px] max-h-[1000px] rounded-full border-[1.5px] border-black pointer-events-none z-0 flex items-center justify-center">
-        <div className="w-[88%] h-[88%] rounded-full border border-black/20 pointer-events-none" />
-        <div className="w-[75%] h-[75%] rounded-full border border-black/5 pointer-events-none" />
+      {/* Giant book- & moon-based cropped abstract graphic asset (SM style) */}
+      <div className="absolute right-[-20vw] bottom-[-20vw] w-[80vw] h-[80vw] max-w-[900px] max-h-[900px] rounded-full border-[1.5px] border-black bg-[#F8FAFC] shadow-[0_20px_60px_rgba(0,0,0,0.06)] pointer-events-none z-0 overflow-hidden p-[8%]">
+        <svg viewBox="0 0 500 500" className="w-full h-full text-black stroke-black fill-none opacity-85">
+          {/* Spine/Center axis of the open book */}
+          <line x1="250" y1="440" x2="250" y2="60" stroke="black" strokeWidth="1.5" strokeDasharray="3 3" />
+          
+          {/* Left Wing Pages (multiple thin sweeping lines) */}
+          <path d="M 250,440 C 170,390 60,300 60,160" stroke="black" strokeWidth="1" />
+          <path d="M 250,440 C 185,370 80,280 80,140" stroke="black" strokeWidth="1" />
+          <path d="M 250,440 C 200,350 100,260 100,120" stroke="black" strokeWidth="1.2" />
+          <path d="M 250,440 C 215,330 120,240 120,100" stroke="black" strokeWidth="1.2" />
+          <path d="M 250,440 C 230,310 140,220 140,80" stroke="black" strokeWidth="1.5" />
+          
+          {/* Right Wing Pages (multiple thin sweeping lines) */}
+          <path d="M 250,440 C 330,390 440,300 440,160" stroke="black" strokeWidth="1" />
+          <path d="M 250,440 C 315,370 420,280 420,140" stroke="black" strokeWidth="1" />
+          <path d="M 250,440 C 300,350 400,260 400,120" stroke="black" strokeWidth="1.2" />
+          <path d="M 250,440 C 285,330 380,240 380,100" stroke="black" strokeWidth="1.2" />
+          <path d="M 250,440 C 270,310 360,220 360,80" stroke="black" strokeWidth="1.5" />
+
+          {/* Book bottom & top connecting flow lines */}
+          <path d="M 60,160 C 120,200 180,180 250,80 C 320,180 380,200 440,160" stroke="black" strokeWidth="1" strokeDasharray="2 2" />
+          <path d="M 60,160 L 440,160" stroke="black" strokeWidth="0.5" strokeDasharray="4 4" />
+        </svg>
       </div>
 
       {/* Content */}
