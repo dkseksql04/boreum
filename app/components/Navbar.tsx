@@ -33,7 +33,9 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#BDF1E7]/95 backdrop-blur-md border-b border-black/10">
+    <>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#BDF1E7]/95 backdrop-blur-md border-b border-black/10">
+
       {/* 1단: Utility Top Bar (SNS Left, Mini Menu Right) */}
       <div className="max-w-7xl mx-auto px-8 py-2.5 flex items-center justify-between border-b border-black/5 text-[10px] tracking-widest text-black/50 font-bold uppercase select-none">
         {/* Left: Tiny Social SVG Icons */}
@@ -212,7 +214,9 @@ export default function Navbar() {
           </div>
         </div>
       )}
+      </header>
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-    </header>
+    </>
   );
 }
+

@@ -47,9 +47,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       onClick={onClose}
     >
       <div
-        className="bg-[#BDF1E7] border-2 border-black rounded-3xl p-8 w-full max-w-md shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden text-black"
+        className="bg-[#BDF1E7] border-2 border-black rounded-3xl p-8 w-full max-w-md shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden text-black animate-scaleUp"
         onClick={(e) => e.stopPropagation()}
       >
+
         {/* Subtle decorative Moon outline inside the modal background */}
         <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full border border-black/10 pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full border border-black/5 pointer-events-none" />
