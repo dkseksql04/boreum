@@ -67,15 +67,28 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         </button>
 
         {/* Header */}
-        <div className="text-center mt-4 mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-black mb-3 bg-white">
-            <span className="font-serif font-bold text-lg">B</span>
+        <div className="text-center mt-4 mb-8 flex flex-col items-center justify-center">
+          {/* Real Brand Logo Mini Art for Login Modal */}
+          <div className="relative flex items-center justify-center h-12 mb-3 select-none pl-4 pr-1">
+            {/* Logo Circle */}
+            <div className="absolute left-0 w-10 h-10 rounded-full border border-black transition-transform duration-700 hover:rotate-45" />
+            {/* Logo Text with Mint-shadow mask */}
+            <span 
+              className="relative z-10 text-2xl font-bold text-black tracking-tight font-serif pl-4.5 select-none" 
+              style={{ 
+                fontFamily: "var(--font-serif), Noto Serif KR, Georgia, serif",
+                textShadow: "0 0 6px #BDF1E7, -2px -2px 0 #BDF1E7, 2px -2px 0 #BDF1E7, -2px 2px 0 #BDF1E7, 2px 2px 0 #BDF1E7, -3px 0 0 #BDF1E7, 3px 0 0 #BDF1E7, 0 -3px 0 #BDF1E7, 0 3px 0 #BDF1E7"
+              }}
+            >
+              Boreum
+            </span>
           </div>
-          <h2 className="text-2xl font-serif font-extrabold tracking-tight">Welcome to Boreum</h2>
+          <h2 className="text-lg font-serif font-extrabold tracking-tight mt-1">Welcome to Boreum</h2>
           <p className="text-xs text-black/60 font-semibold tracking-wider mt-1.5 uppercase">
             보름 독서 모임 로그인
           </p>
         </div>
+
 
         {/* Status Messages */}
         {message && (
