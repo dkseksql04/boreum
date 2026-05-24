@@ -1,6 +1,6 @@
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#BDF1E7] pt-20">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#BDF1E7] pt-56">
       {/* Giant book line graphic with architectural grid lines (SM Style) */}
       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[90vw] md:w-[50vw] h-[75vh] max-w-[800px] z-0 pointer-events-none flex items-center justify-end pr-8 md:pr-16">
         {/* Structural Grid lines crossing the screen */}
