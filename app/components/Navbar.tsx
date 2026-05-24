@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import LoginModal from "./LoginModal";
+
 
 const navLinks = [
   { label: "이번 달 책", href: "#book" },
@@ -20,6 +22,7 @@ const notices = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [noticeIndex, setNoticeIndex] = useState(0);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   // Auto-rolling timer for notices (horizontal slide every 3.5s)
   useEffect(() => {
@@ -59,11 +62,22 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Right: Tiny Utility Links */}
-        <div className="flex items-center gap-6">
-          <a href="#" className="hover:text-black transition-colors">Side Menu</a>
-          <a href="#" className="hover:text-black transition-colors">Subscribe</a>
-          <a href="#" className="hover:text-black transition-colors hidden sm:inline-block">My Library</a>
+        {/* Right: Tiny Utility Links & Login Buttons */}
+        <div className="flex items-center gap-5">
+          <a href="#" className="hover:text-black transition-colors hidden sm:inline-block">Side Menu</a>
+          <a href="#" className="hover:text-black transition-colors hidden sm:inline-block">Subscribe</a>
+          <a href="#" className="hover:text-black transition-colors">My Library</a>
+          {/* Subtle vertical separator line */}
+          <div className="h-3 w-[1px] bg-black/15 mx-1" />
+          <button 
+            onClick={() => setIsLoginOpen(true)}
+            className="text-black font-extrabold hover:text-black/70 transition-colors cursor-pointer"
+          >
+            로그인
+          </button>
+          <button className="px-3.5 py-1.5 bg-black text-[#BDF1E7] border border-black hover:bg-black/90 hover:scale-[1.02] active:scale-[0.98] transition-all rounded-full font-extrabold cursor-pointer text-[9px] leading-none">
+            모임 참여
+          </button>
         </div>
       </div>
 
@@ -183,7 +197,13 @@ export default function Navbar() {
             ))}
           </ul>
           <div className="mt-4 pt-4 border-t border-black/10 flex gap-2.5">
-            <button className="flex-1 py-2.5 text-[10px] font-bold text-black/70 border border-black/20 rounded-xl hover:bg-slate-50 transition-colors uppercase tracking-widest">
+            <button 
+              onClick={() => {
+                setOpen(false);
+                setIsLoginOpen(true);
+              }}
+              className="flex-1 py-2.5 text-[10px] font-bold text-black/70 border border-black/20 rounded-xl hover:bg-slate-50 transition-colors uppercase tracking-widest"
+            >
               로그인
             </button>
             <button className="flex-1 py-2.5 text-[10px] font-bold bg-black text-white rounded-xl hover:bg-black/90 transition-colors uppercase tracking-widest">
@@ -192,6 +212,7 @@ export default function Navbar() {
           </div>
         </div>
       )}
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </header>
   );
 }
