@@ -6,7 +6,11 @@ import LoginModal from "./LoginModal";
 
 
 const navLinks = [
+  { label: "이번 달 책", href: "#book" },
+  { label: "모임 일정", href: "#schedule" },
+  { label: "독서 기록", href: "#reviews" },
   { label: "멤버", href: "#members" },
+  { label: "사유 아카이브", href: "#quote-companion" },
 ];
 
 
