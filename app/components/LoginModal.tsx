@@ -69,19 +69,63 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         {/* Header */}
         <div className="text-center mt-4 mb-8 flex flex-col items-center justify-center">
           {/* Real Brand Logo Mini Art for Login Modal */}
-          <div className="relative flex items-center justify-center h-12 mb-3 select-none pl-4 pr-1">
-            {/* Logo Circle */}
-            <div className="absolute left-0 w-10 h-10 rounded-full border border-black transition-transform duration-700 hover:rotate-45" />
-            {/* Logo Text with Mint-shadow mask */}
-            <span 
-              className="relative z-10 text-2xl font-bold text-black tracking-tight font-serif pl-4.5 select-none" 
-              style={{ 
-                fontFamily: "var(--font-serif), Noto Serif KR, Georgia, serif",
-                textShadow: "0 0 6px #BDF1E7, -2px -2px 0 #BDF1E7, 2px -2px 0 #BDF1E7, -2px 2px 0 #BDF1E7, 2px 2px 0 #BDF1E7, -3px 0 0 #BDF1E7, 3px 0 0 #BDF1E7, 0 -3px 0 #BDF1E7, 0 3px 0 #BDF1E7"
-              }}
+          <div className="relative flex items-center justify-center h-12 mb-3 select-none">
+            <svg
+              width="150"
+              height="54"
+              viewBox="0 0 220 80"
+              className="overflow-visible select-none"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Boreum
-            </span>
+              <defs>
+                <mask id="logo-mask-modal">
+                  {/* Everything white remains visible */}
+                  <rect x="-10" y="-10" width="240" height="100" fill="white" />
+                  {/* Everything black cuts holes (4px padding around the letters) */}
+                  <text
+                    x="48"
+                    y="49"
+                    fontFamily="var(--font-serif), 'Playfair Display', Georgia, serif"
+                    fontSize="26"
+                    fontWeight="400"
+                    fill="black"
+                    stroke="black"
+                    strokeWidth="4"
+                    strokeLinejoin="round"
+                    letterSpacing="-0.03em"
+                    className="select-none pointer-events-none"
+                  >
+                    Boreum
+                  </text>
+                </mask>
+              </defs>
+
+              {/* Rotatable Complete Circle with Mask applied */}
+              <circle
+                cx="60"
+                cy="40"
+                r="30"
+                fill="none"
+                stroke="#142825"
+                strokeWidth="0.6"
+                mask="url(#logo-mask-modal)"
+                className="origin-[60px_40px] transition-transform duration-700 ease-out hover:rotate-45"
+              />
+
+              {/* Real Logo Text */}
+              <text
+                x="48"
+                y="49"
+                fontFamily="var(--font-serif), 'Playfair Display', Georgia, serif"
+                fontSize="26"
+                fontWeight="400"
+                fill="#142825"
+                letterSpacing="-0.03em"
+                className="select-none pointer-events-none"
+              >
+                Boreum
+              </text>
+            </svg>
           </div>
           <h2 className="text-lg font-serif font-extrabold tracking-tight mt-1">Welcome to Boreum</h2>
           <p className="text-xs text-black/60 font-semibold tracking-wider mt-1.5 uppercase">

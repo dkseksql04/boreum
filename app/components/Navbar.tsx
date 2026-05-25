@@ -6,11 +6,9 @@ import LoginModal from "./LoginModal";
 
 
 const navLinks = [
-  { label: "이번 달 책", href: "#book" },
-  { label: "독서 기록", href: "#reviews" },
-  { label: "모임 일정", href: "#schedule" },
   { label: "멤버", href: "#members" },
 ];
+
 
 const notices = [
   "🌿 [모집] 보름 독서 모임 5월 멤버 대모집 중! (5월 31일 모집 마감)",
@@ -83,21 +81,65 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* 2단: Main Logo Center (Centered Serif Brand Logo with Cutout Mask) */}
-      <div className="max-w-7xl mx-auto px-8 py-3.5 flex justify-center border-b border-black/5 relative">
-        <Link href="/" className="relative flex items-center h-12 group pl-4 select-none">
-          {/* Logo Circle */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-black transition-transform duration-700 group-hover:rotate-45" />
-          {/* Logo Text */}
-          <span 
-            className="relative z-10 text-2xl md:text-3xl font-bold text-black tracking-tight font-serif pl-4.5 select-none" 
-            style={{ 
-              fontFamily: "var(--font-serif), serif",
-              textShadow: "0 0 6px #BDF1E7, -2px -2px 0 #BDF1E7, 2px -2px 0 #BDF1E7, -2px 2px 0 #BDF1E7, 2px 2px 0 #BDF1E7, -3px 0 0 #BDF1E7, 3px 0 0 #BDF1E7, 0 -3px 0 #BDF1E7, 0 3px 0 #BDF1E7"
-            }}
+      {/* 2단: Main Logo Center (Centered Elegant Serif Brand Logo with Exact Brand Ratios) */}
+      <div className="max-w-7xl mx-auto px-8 py-1.5 flex justify-center border-b border-black/5 relative">
+        <Link href="/" className="relative flex items-center h-16 group select-none" aria-label="보름 홈으로 이동">
+          <svg
+            width="200"
+            height="72"
+            viewBox="0 0 220 80"
+            className="overflow-visible select-none"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            Boreum
-          </span>
+            <defs>
+              <mask id="logo-mask-nav">
+                {/* Everything white remains visible */}
+                <rect x="-10" y="-10" width="240" height="100" fill="white" />
+                {/* Everything black cuts holes (4px padding around the letters) */}
+                <text
+                  x="48"
+                  y="49"
+                  fontFamily="var(--font-serif), 'Playfair Display', Georgia, serif"
+                  fontSize="26"
+                  fontWeight="400"
+                  fill="black"
+                  stroke="black"
+                  strokeWidth="4"
+                  strokeLinejoin="round"
+                  letterSpacing="-0.03em"
+                  className="select-none pointer-events-none"
+                >
+                  Boreum
+                </text>
+              </mask>
+            </defs>
+
+            {/* Rotatable Complete Circle with Mask applied */}
+            <circle
+              cx="60"
+              cy="40"
+              r="30"
+              fill="none"
+              stroke="#142825"
+              strokeWidth="0.6"
+              mask="url(#logo-mask-nav)"
+              className="origin-[60px_40px] transition-transform duration-700 ease-out group-hover:rotate-45"
+            />
+
+            {/* Real Logo Text */}
+            <text
+              x="48"
+              y="49"
+              fontFamily="var(--font-serif), 'Playfair Display', Georgia, serif"
+              fontSize="26"
+              fontWeight="400"
+              fill="#142825"
+              letterSpacing="-0.03em"
+              className="select-none pointer-events-none"
+            >
+              Boreum
+            </text>
+          </svg>
         </Link>
       </div>
 
