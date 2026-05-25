@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import LoginModal from "./LoginModal";
-
+import { supabase } from "@/lib/supabase";
 
 const navLinks = [
   { label: "이번 달 책", href: "#book" },
@@ -12,7 +12,6 @@ const navLinks = [
   { label: "멤버", href: "#members" },
   { label: "사유 아카이브", href: "#quote-companion" },
 ];
-
 
 const notices = [
   "🌿 [모집] 보름 독서 모임 5월 멤버 대모집 중! (5월 31일 모집 마감)",
@@ -25,6 +24,22 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [noticeIndex, setNoticeIndex] = useState(0);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  // Monitor Supabase Auth state
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   // Auto-rolling timer for notices (horizontal slide every 3.5s)
   useEffect(() => {
@@ -73,12 +88,28 @@ export default function Navbar() {
           <a href="#" className="hover:text-black transition-colors">My Library</a>
           {/* Subtle vertical separator line */}
           <div className="h-3 w-[1px] bg-black/15 mx-1" />
-          <button 
-            onClick={() => setIsLoginOpen(true)}
-            className="text-black font-extrabold hover:text-black/70 transition-colors cursor-pointer"
-          >
-            로그인
-          </button>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <span className="text-black font-extrabold normal-case">
+                🌿 {user.email?.split('@')[0]} 님
+              </span>
+              <button 
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                }}
+                className="text-black/50 hover:text-black transition-colors cursor-pointer font-bold"
+              >
+                로그아웃
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => setIsLoginOpen(true)}
+              className="text-black font-extrabold hover:text-black/70 transition-colors cursor-pointer"
+            >
+              로그인
+            </button>
+          )}
           <button className="px-3.5 py-1.5 bg-black text-[#BDF1E7] border border-black hover:bg-black/90 hover:scale-[1.02] active:scale-[0.98] transition-all rounded-full font-extrabold cursor-pointer text-[9px] leading-none">
             모임 참여
           </button>
@@ -97,9 +128,7 @@ export default function Navbar() {
           >
             <defs>
               <mask id="logo-mask-nav">
-                {/* Everything white remains visible */}
                 <rect x="-10" y="-10" width="240" height="100" fill="white" />
-                {/* Everything black cuts holes (4px padding around the letters) */}
                 <text
                   x="48"
                   y="49"
@@ -117,8 +146,6 @@ export default function Navbar() {
                 </text>
               </mask>
             </defs>
-
-            {/* Rotatable Complete Circle with Mask applied */}
             <circle
               cx="60"
               cy="40"
@@ -129,8 +156,6 @@ export default function Navbar() {
               mask="url(#logo-mask-nav)"
               className="origin-[60px_40px] transition-transform duration-700 ease-out group-hover:rotate-45"
             />
-
-            {/* Real Logo Text */}
             <text
               x="48"
               y="49"
@@ -147,10 +172,9 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* 3단: GNB Navigation Links & Search (Enclosed in Vogue-style horizontal line) */}
+      {/* 3단: GNB Navigation Links & Search */}
       <div className="border-b border-black/10 bg-[#BDF1E7]/20">
         <nav className="max-w-7xl mx-auto px-8 py-2.5 flex items-center justify-between">
-          {/* Spacing Placeholder to perfectly center navigation on desktop */}
           <div className="w-8 hidden md:block" />
 
           {/* Centered Navigation Menu */}
@@ -161,7 +185,6 @@ export default function Navbar() {
                   href={link.href}
                   className="relative group text-xs font-bold text-black/75 hover:text-black transition-colors duration-200 tracking-widest uppercase py-1.5"
                 >
-                  {/* Vogue-style elegant underline hover effect */}
                   <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                   {link.label}
                 </a>
@@ -171,7 +194,6 @@ export default function Navbar() {
 
           {/* Right: GNB Search & Mobile Menu CTA */}
           <div className="flex items-center gap-4 ml-auto md:ml-0">
-            {/* Vogue Search Icon */}
             <button className="text-black/70 hover:text-black transition-colors p-1.5" aria-label="Search">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -191,7 +213,7 @@ export default function Navbar() {
         </nav>
       </div>
 
-      {/* 4단: Auto-rolling Horizontal Slide Ticker Banner */}
+      {/* 4단: Auto-rolling Ticker */}
       <div className="bg-black text-[#BDF1E7] text-[10px] font-bold py-2.5 px-8 flex items-center justify-between overflow-hidden relative h-9 border-b border-black">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <div className="flex items-center gap-2 overflow-hidden h-5 relative flex-1">
@@ -211,7 +233,6 @@ export default function Navbar() {
               </div>
             ))}
           </div>
-          {/* Right indicator dots for notice pagination */}
           <div className="hidden md:flex items-center gap-2.5 text-[#BDF1E7]/70 text-[9px] uppercase tracking-widest pl-4">
             <span>Notice Ticker</span>
             <div className="flex gap-1">
@@ -228,7 +249,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Drawer (Only visible on open mobile view) */}
+      {/* Mobile Drawer */}
       {open && (
         <div className="md:hidden mt-0 bg-white border-b border-black/10 p-5 animate-fadeIn">
           <ul className="flex flex-col gap-2.5">
@@ -245,16 +266,33 @@ export default function Navbar() {
             ))}
           </ul>
           <div className="mt-4 pt-4 border-t border-black/10 flex gap-2.5">
-            <button 
-              onClick={() => {
-                setOpen(false);
-                setIsLoginOpen(true);
-              }}
-              className="flex-1 py-2.5 text-[10px] font-bold text-black/70 border border-black/20 rounded-xl hover:bg-slate-50 transition-colors uppercase tracking-widest"
-            >
-              로그인
-            </button>
-            <button className="flex-1 py-2.5 text-[10px] font-bold bg-black text-white rounded-xl hover:bg-black/90 transition-colors uppercase tracking-widest">
+            {user ? (
+              <div className="flex-1 flex flex-col gap-2.5 items-center">
+                <span className="text-[10px] font-extrabold text-black/70">
+                  🌿 {user.email?.split('@')[0]} 님 로그인 중
+                </span>
+                <button 
+                  onClick={async () => {
+                    setOpen(false);
+                    await supabase.auth.signOut();
+                  }}
+                  className="w-full py-2.5 text-[10px] font-bold text-black/70 border border-black/20 rounded-xl hover:bg-slate-50 transition-colors uppercase tracking-widest cursor-pointer"
+                >
+                  로그아웃
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => {
+                  setOpen(false);
+                  setIsLoginOpen(true);
+                }}
+                className="flex-1 py-2.5 text-[10px] font-bold text-black/70 border border-black/20 rounded-xl hover:bg-slate-50 transition-colors uppercase tracking-widest cursor-pointer"
+              >
+                로그인
+              </button>
+            )}
+            <button className="flex-1 py-2.5 text-[10px] font-bold bg-black text-white rounded-xl hover:bg-black/90 transition-colors uppercase tracking-widest cursor-pointer">
               모임 참여
             </button>
           </div>
@@ -265,4 +303,3 @@ export default function Navbar() {
     </>
   );
 }
-

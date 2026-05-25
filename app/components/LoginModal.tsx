@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -8,6 +9,7 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -20,10 +22,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setIsLoading(true);
     setMessage(null);
 
-    // Simulated authentic authentication flow
-    setTimeout(() => {
-      setIsLoading(false);
-      if (email.includes('@') && password.length >= 4) {
+    try {
+      if (mode === 'login') {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+
         setMessage({
           type: 'success',
           text: '보름 모임에 오신 것을 환영합니다! 로그인에 성공했습니다.',
@@ -31,14 +37,49 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         setTimeout(() => {
           onClose();
           setMessage(null);
-        }, 1500);
+        }, 1200);
       } else {
-        setMessage({
-          type: 'error',
-          text: '이메일 주소 또는 비밀번호를 다시 확인해 주세요.',
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
         });
+        if (error) throw error;
+
+        setMessage({
+          type: 'success',
+          text: '보름 멤버 가입을 환영합니다! 입력하신 이메일의 인증 메일을 확인해 주시거나 바로 로그인해 주세요.',
+        });
+        setTimeout(() => {
+          setMode('login');
+          setMessage(null);
+        }, 2500);
       }
-    }, 1200);
+    } catch (err: any) {
+      console.error("Auth error:", err);
+      setMessage({
+        type: 'error',
+        text: err.message || '인증 과정 중 에러가 발생했습니다. 다시 시도해 주세요.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOAuthLogin = async (provider: 'kakao' | 'google') => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      console.error("OAuth error:", err);
+      setMessage({ type: 'error', text: err.message });
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -67,7 +108,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         </button>
 
         {/* Header */}
-        <div className="text-center mt-4 mb-8 flex flex-col items-center justify-center">
+        <div className="text-center mt-4 mb-6 flex flex-col items-center justify-center">
           {/* Real Brand Logo Mini Art for Login Modal */}
           <div className="relative flex items-center justify-center h-12 mb-3 select-none">
             <svg
@@ -79,9 +120,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             >
               <defs>
                 <mask id="logo-mask-modal">
-                  {/* Everything white remains visible */}
                   <rect x="-10" y="-10" width="240" height="100" fill="white" />
-                  {/* Everything black cuts holes (4px padding around the letters) */}
                   <text
                     x="48"
                     y="49"
@@ -99,8 +138,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   </text>
                 </mask>
               </defs>
-
-              {/* Rotatable Complete Circle with Mask applied */}
               <circle
                 cx="60"
                 cy="40"
@@ -111,8 +148,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 mask="url(#logo-mask-modal)"
                 className="origin-[60px_40px] transition-transform duration-700 ease-out hover:rotate-45"
               />
-
-              {/* Real Logo Text */}
               <text
                 x="48"
                 y="49"
@@ -129,10 +164,27 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </div>
           <h2 className="text-lg font-serif font-extrabold tracking-tight mt-1">Welcome to Boreum</h2>
           <p className="text-xs text-black/60 font-semibold tracking-wider mt-1.5 uppercase">
-            보름 독서 모임 로그인
+            {mode === 'login' ? '보름 독서 모임 로그인' : '보름 신규 멤버 가입'}
           </p>
         </div>
 
+        {/* Tab Toggle between Login and Signup */}
+        <div className="flex border-2 border-black rounded-xl overflow-hidden mb-6 bg-white font-extrabold text-[10px] tracking-widest uppercase">
+          <button
+            type="button"
+            onClick={() => { setMode('login'); setMessage(null); }}
+            className={`flex-1 py-2.5 transition-all cursor-pointer ${mode === 'login' ? 'bg-black text-[#BDF1E7]' : 'bg-white text-black hover:bg-black/5'}`}
+          >
+            로그인
+          </button>
+          <button
+            type="button"
+            onClick={() => { setMode('signup'); setMessage(null); }}
+            className={`flex-1 py-2.5 transition-all cursor-pointer ${mode === 'signup' ? 'bg-black text-[#BDF1E7]' : 'bg-white text-black hover:bg-black/5'}`}
+          >
+            회원가입
+          </button>
+        </div>
 
         {/* Status Messages */}
         {message && (
@@ -178,18 +230,20 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             />
           </div>
 
-          <div className="flex items-center justify-between text-[10px] font-extrabold tracking-wider text-black/60 pt-1">
-            <label className="flex items-center gap-1.5 cursor-pointer">
-              <input
-                type="checkbox"
-                className="rounded border-black text-black focus:ring-0 focus:ring-offset-0 accent-black cursor-pointer"
-              />
-              로그인 상태 유지
-            </label>
-            <a href="#" className="hover:text-black transition-colors underline decoration-black/25">
-              비밀번호 분실
-            </a>
-          </div>
+          {mode === 'login' && (
+            <div className="flex items-center justify-between text-[10px] font-extrabold tracking-wider text-black/60 pt-1">
+              <label className="flex items-center gap-1.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="rounded border-black text-black focus:ring-0 focus:ring-offset-0 accent-black cursor-pointer"
+                />
+                로그인 상태 유지
+              </label>
+              <a href="#" className="hover:text-black transition-colors underline decoration-black/25">
+                비밀번호 분실
+              </a>
+            </div>
+          )}
 
           <button
             type="submit"
@@ -205,7 +259,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 Processing...
               </>
             ) : (
-              '로그인'
+              mode === 'login' ? '로그인' : '회원가입 완료하기'
             )}
           </button>
         </form>
@@ -223,44 +277,39 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
-            onClick={() => {
-              setIsLoading(true);
-              setTimeout(() => {
-                setIsLoading(false);
-                setMessage({ type: 'success', text: '카카오톡으로 로그인되었습니다.' });
-                setTimeout(() => { onClose(); setMessage(null); }, 1500);
-              }, 1000);
-            }}
+            onClick={() => handleOAuthLogin('kakao')}
             className="py-2.5 bg-[#FEE500] hover:bg-[#FEE500]/95 border-2 border-black rounded-xl text-[9px] font-extrabold tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer text-[#191919]"
           >
-            {/* Kakao logo placeholder/SVG */}
             <span className="w-2 h-2 rounded-full bg-[#191919]" />
             KAKAO
           </button>
           <button
             type="button"
-            onClick={() => {
-              setIsLoading(true);
-              setTimeout(() => {
-                setIsLoading(false);
-                setMessage({ type: 'success', text: 'Google 계정으로 로그인되었습니다.' });
-                setTimeout(() => { onClose(); setMessage(null); }, 1500);
-              }, 1000);
-            }}
+            onClick={() => handleOAuthLogin('google')}
             className="py-2.5 bg-white hover:bg-slate-50 border-2 border-black rounded-xl text-[9px] font-extrabold tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer text-black"
           >
-            {/* Google logo placeholder/SVG */}
             <span className="w-2 h-2 rounded-full bg-red-500" />
             GOOGLE
           </button>
         </div>
 
-        {/* Sign Up Footer */}
+        {/* Sign Up Footer Toggle */}
         <div className="text-center text-[10px] font-bold text-black/50 mt-6 tracking-wide">
-          아직 보름 멤버가 아니신가요?{' '}
-          <a href="#members" onClick={onClose} className="text-black font-extrabold hover:underline">
-            멤버 가입 신청
-          </a>
+          {mode === 'login' ? (
+            <>
+              아직 보름 멤버가 아니신가요?{' '}
+              <button onClick={() => setMode('signup')} className="text-black font-extrabold hover:underline bg-transparent border-none cursor-pointer p-0">
+                멤버 가입 신청
+              </button>
+            </>
+          ) : (
+            <>
+              이미 보름 멤버이신가요?{' '}
+              <button onClick={() => setMode('login')} className="text-black font-extrabold hover:underline bg-transparent border-none cursor-pointer p-0">
+                로그인 화면으로
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

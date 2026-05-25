@@ -11,7 +11,21 @@ interface Quote {
   created_at?: string;
 }
 
+const seedQuotes = [
+  {
+    book_title: "데미안 (헤르만 헤세)",
+    quote_text: "새는 알에서 나오려고 투쟁한다. 알은 세계이다. 태어나려는 자는 하나의 세계를 깨뜨려야 한다.",
+    user_note: "새로운 도전을 고민할 때마다 마음에 새기는 용기의 글귀."
+  },
+  {
+    book_title: "명상록 (마르쿠스 아우렐리우스)",
+    quote_text: "우리를 불안하게 만드는 것은 외부의 일들이 아니라, 그것들에 대해 우리가 내리는 판단이다.",
+    user_note: "스트레스 받거나 흔들릴 때 가장 강한 버팀목이 되는 구절."
+  }
+];
+
 export default function QuoteCompanionSection() {
+  const [user, setUser] = useState<any>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [bookTitle, setBookTitle] = useState("");
   const [quoteText, setQuoteText] = useState("");
@@ -22,46 +36,66 @@ export default function QuoteCompanionSection() {
   const [loading, setLoading] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  // Load quotes from Supabase, fallback to localStorage if table doesn't exist yet
-  const loadQuotes = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("saved_quotes")
-        .select("*")
-        .order("created_at", { ascending: false });
+  // Monitor Supabase Auth state
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
 
-      if (error) throw error;
-      setQuotes(data || []);
-    } catch (e) {
-      console.warn("Supabase saved_quotes table not ready. Falling back to localStorage.", e);
-      const local = localStorage.getItem("boreum_saved_quotes");
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Reload quotes whenever the active user session changes
+  useEffect(() => {
+    loadQuotes();
+    setAiResponse(null);
+  }, [user]);
+
+  // Load quotes from Supabase (user-specific), with user-isolated LocalStorage fallback
+  const loadQuotes = async () => {
+    const activeUser = (await supabase.auth.getUser()).data.user || user;
+    
+    if (activeUser) {
+      // 1. Logged-in Mode
+      try {
+        const { data, error } = await supabase
+          .from("saved_quotes")
+          .select("*")
+          .eq("user_id", activeUser.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setQuotes(data || []);
+      } catch (e) {
+        console.warn("Supabase saved_quotes table not ready. Falling back to user-isolated localStorage.", e);
+        const userKey = `boreum_saved_quotes_${activeUser.id}`;
+        const local = localStorage.getItem(userKey);
+        if (local) {
+          setQuotes(JSON.parse(local));
+        } else {
+          setQuotes(seedQuotes);
+          localStorage.setItem(userKey, JSON.stringify(seedQuotes));
+        }
+      }
+    } else {
+      // 2. Guest/Anonymous Mode
+      const local = localStorage.getItem("boreum_saved_quotes_guest");
       if (local) {
         setQuotes(JSON.parse(local));
       } else {
-        // Default seed quotes for first-time gorgeous presentation
-        const seed = [
-          {
-            book_title: "데미안 (헤르만 헤세)",
-            quote_text: "새는 알에서 나오려고 투쟁한다. 알은 세계이다. 태어나려는 자는 하나의 세계를 깨뜨려야 한다.",
-            user_note: "새로운 도전을 고민할 때마다 마음에 새기는 용기의 글귀."
-          },
-          {
-            book_title: "명상록 (마르쿠스 아우렐리우스)",
-            quote_text: "우리를 불안하게 만드는 것은 외부의 일들이 아니라, 그것들에 대해 우리가 내리는 판단이다.",
-            user_note: "스트레스 받거나 흔들릴 때 가장 강한 버팀목이 되는 구절."
-          }
-        ];
-        setQuotes(seed);
-        localStorage.setItem("boreum_saved_quotes", JSON.stringify(seed));
+        setQuotes(seedQuotes);
+        localStorage.setItem("boreum_saved_quotes_guest", JSON.stringify(seedQuotes));
       }
     }
   };
 
-  useEffect(() => {
-    loadQuotes();
-  }, []);
-
-  // Handle adding a new quote
+  // Handle adding a new quote (DB or User-isolated LocalStorage fallback)
   const handleAddQuote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bookTitle || !quoteText) return;
@@ -73,23 +107,32 @@ export default function QuoteCompanionSection() {
       created_at: new Date().toISOString()
     };
 
-    try {
-      // 1. Try Supabase
-      const { error } = await supabase.from("saved_quotes").insert([{
-        user_id: "00000000-0000-0000-0000-000000000000", // guest UUID for prototyping
-        book_title: bookTitle,
-        quote_text: quoteText,
-        user_note: userNote
-      }]);
+    const activeUser = (await supabase.auth.getUser()).data.user || user;
 
-      if (error) throw error;
-      await loadQuotes();
-    } catch (e) {
-      // 2. Fallback to localStorage
-      console.warn("Saving to localStorage due to database migration pending.", e);
+    if (activeUser) {
+      // Logged-in Mode
+      try {
+        const { error } = await supabase.from("saved_quotes").insert([{
+          user_id: activeUser.id,
+          book_title: bookTitle,
+          quote_text: quoteText,
+          user_note: userNote
+        }]);
+
+        if (error) throw error;
+        await loadQuotes();
+      } catch (e) {
+        console.warn("Saving to Supabase failed, writing to user-isolated localStorage.", e);
+        const userKey = `boreum_saved_quotes_${activeUser.id}`;
+        const updated = [newQuote, ...quotes];
+        setQuotes(updated);
+        localStorage.setItem(userKey, JSON.stringify(updated));
+      }
+    } else {
+      // Guest Mode
       const updated = [newQuote, ...quotes];
       setQuotes(updated);
-      localStorage.setItem("boreum_saved_quotes", JSON.stringify(updated));
+      localStorage.setItem("boreum_saved_quotes_guest", JSON.stringify(updated));
     }
 
     // Reset Form
@@ -101,18 +144,28 @@ export default function QuoteCompanionSection() {
 
   // Handle deleting a quote
   const handleDeleteQuote = async (idx: number, id?: string) => {
-    try {
-      if (id) {
-        const { error } = await supabase.from("saved_quotes").delete().eq("id", id);
-        if (error) throw error;
-        await loadQuotes();
-        return;
+    const activeUser = (await supabase.auth.getUser()).data.user || user;
+
+    if (activeUser) {
+      try {
+        if (id) {
+          const { error } = await supabase.from("saved_quotes").delete().eq("id", id);
+          if (error) throw error;
+          await loadQuotes();
+          return;
+        }
+        throw new Error("No database ID");
+      } catch (e) {
+        console.warn("Database delete failed, deleting from user-isolated localStorage.", e);
+        const userKey = `boreum_saved_quotes_${activeUser.id}`;
+        const updated = quotes.filter((_, i) => i !== idx);
+        setQuotes(updated);
+        localStorage.setItem(userKey, JSON.stringify(updated));
       }
-      throw new Error("No database ID");
-    } catch (e) {
+    } else {
       const updated = quotes.filter((_, i) => i !== idx);
       setQuotes(updated);
-      localStorage.setItem("boreum_saved_quotes", JSON.stringify(updated));
+      localStorage.setItem("boreum_saved_quotes_guest", JSON.stringify(updated));
     }
   };
 
@@ -124,11 +177,16 @@ export default function QuoteCompanionSection() {
     setLoading(true);
     setAiResponse(null);
 
+    const activeUser = (await supabase.auth.getUser()).data.user || user;
+
     try {
       const response = await fetch("/api/quote-companion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userMessage: userSituation })
+        body: JSON.stringify({ 
+          userMessage: userSituation,
+          userId: activeUser ? activeUser.id : "guest" // Supply actual User ID for RAG isolation
+        })
       });
 
       const data = await response.json();
@@ -175,7 +233,7 @@ export default function QuoteCompanionSection() {
           </button>
         </div>
 
-        {/* 1. Add Quote Form (Sliding drop-down sheet, clean lines) */}
+        {/* 1. Add Quote Form */}
         {showAddForm && (
           <form 
             onSubmit={handleAddQuote}
@@ -236,16 +294,28 @@ export default function QuoteCompanionSection() {
           </form>
         )}
 
-        {/* Grid Container splitting Scrapbook left and AI Oracle right (Vogue style structure) */}
+        {/* Grid Container */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* ========================================================================= */}
           {/* LEFT: Personal Quote Library Scrapbook (lg:col-span-7) */}
           {/* ========================================================================= */}
           <div className="lg:col-span-7">
-            <h3 className="text-xs font-bold text-black uppercase tracking-wider mb-5 flex items-center gap-2">
-              📂 사유 보관소갈피 ({quotes.length})
-            </h3>
+            {/* Header with personalization tag */}
+            <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
+              <h3 className="text-xs font-bold text-black uppercase tracking-wider flex items-center gap-2">
+                📂 사유 보관소갈피 ({quotes.length})
+              </h3>
+              {user ? (
+                <span className="text-[10px] font-extrabold bg-black text-[#BDF1E7] px-2.5 py-1 rounded-md tracking-wider">
+                  🌿 {user.email?.split('@')[0]} 님의 서재
+                </span>
+              ) : (
+                <span className="text-[9px] font-extrabold text-[#203D39] bg-white/60 border border-black/10 px-2.5 py-1 rounded-md tracking-wider animate-pulse">
+                  ⚠️ 로그인하시면 나만의 서재가 개별 격리 보관됩니다.
+                </span>
+              )}
+            </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
               {quotes.map((q, idx) => (
@@ -294,7 +364,7 @@ export default function QuoteCompanionSection() {
                 🔮 AI 구절 오라클 (Boreum Companion)
               </h3>
               <p className="text-[11px] font-semibold text-black/75 leading-relaxed mb-6">
-                인터넷의 조각 정보나 타인의 해답을 배제합니다. 오직 당신이 읽고 수집한 위의 **사유 보관소 문장들만을 온전한 우주(Knowledge Base)로 삼아** 당신의 고민에 맞는 최고의 인생 문장과 사유를 제공합니다.
+                인터넷의 조각 정보나 타인의 해답을 배제합니다. 오직 {user ? "**당신이 저장한 보관소 문장들만을**" : "**위 보관소 갈피 문장들만을**"} 온전한 우주(Knowledge Base)로 삼아 당신의 고민에 맞는 최고의 인생 문장과 사유를 제공합니다.
               </p>
 
               {/* Form to submit situation */}
@@ -322,14 +392,13 @@ export default function QuoteCompanionSection() {
               {/* AI Response Display */}
               {loading && (
                 <div className="py-12 flex flex-col items-center justify-center text-center">
-                  {/* Premium animated book drawing */}
                   <div className="w-12 h-12 relative mb-4 animate-pulse">
                     <svg className="w-full h-full text-black stroke-black fill-none" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                   </div>
                   <p className="text-[10px] font-bold tracking-[0.25em] text-black/60 uppercase pl-[0.25em] animate-pulse">
-                    당신의 사유 서재 검색 중...
+                    당신의 사유 서재 분석 중...
                   </p>
                 </div>
               )}
@@ -337,7 +406,7 @@ export default function QuoteCompanionSection() {
               {aiResponse && !loading && (
                 <div className="border border-black/10 bg-white/50 p-5 rounded-xl animate-fadeIn">
                   <span className="text-[8px] font-extrabold bg-black text-[#BDF1E7] px-2 py-0.5 rounded-full tracking-widest uppercase block w-max mb-3">
-                    Selected Wisdom
+                    {aiResponse.isFallback ? "Selected Wisdom (Fallback Mode)" : "Selected Wisdom"}
                   </span>
                   
                   {/* Referenced book & quote */}

@@ -4,13 +4,16 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(req: Request) {
   try {
-    const { userMessage } = await req.json();
+    const { userMessage, userId } = await req.json();
 
-    // 1. Fetch saved quotes from Supabase
-    const { data: dbQuotes } = await supabase
-      .from("saved_quotes")
-      .select("*")
-      .order("created_at", { ascending: false });
+    // 1. Fetch saved quotes from Supabase (filtered by user_id if authenticated)
+    let queryBuilder = supabase.from("saved_quotes").select("*");
+    
+    if (userId && userId !== "guest") {
+      queryBuilder = queryBuilder.eq("user_id", userId);
+    }
+    
+    const { data: dbQuotes } = await queryBuilder.order("created_at", { ascending: false });
 
     // Fallback preset high-sensibility quotes to ensure the demo is always stunning
     const presetQuotes = [
