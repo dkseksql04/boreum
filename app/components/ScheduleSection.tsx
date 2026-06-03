@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import AddMeetingModal from './AddMeetingModal'
+import Link from 'next/link'
 
 const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토']
 
@@ -68,7 +69,9 @@ export default async function ScheduleSection() {
                     {/* Details Info */}
                     <div className="flex-1 min-w-0 md:pl-8 md:border-l border-[#142825]/12">
                       <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-                        <h3 className="font-bold text-base text-[#142825] tracking-tight">{meeting.title}</h3>
+                        <Link href={`/meetings/${meeting.id}`} className="hover:underline">
+                          <h3 className="font-bold text-base text-[#142825] tracking-tight">{meeting.title}</h3>
+                        </Link>
                         {done && <span className="px-2 py-0.5 text-[9px] font-bold bg-[#142825]/10 text-[#142825]/70 rounded-full border border-[#142825]/15">완료</span>}
                         {highlight && (
                           <span className="px-2.5 py-0.5 text-[9px] font-bold bg-[#142825] text-[#BDF1E7] rounded-full flex items-center gap-1.5 uppercase tracking-wider border border-[#142825]">

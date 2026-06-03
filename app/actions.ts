@@ -97,8 +97,10 @@ export async function createMeeting(_: unknown, formData: FormData): Promise<Act
   if (!meeting_date) return { success: false, error: '날짜를 선택해주세요' }
 
   const book_id = (formData.get('book_id') as string) || null
+  const leader_id = (formData.get('leader_id') as string) || 'guest'
+  const notice = (formData.get('notice') as string) || ''
 
-  const { error } = await supabase.from('meetings').insert({
+  const insertPayload: any = {
     title: title.trim(),
     book_id,
     meeting_date,
@@ -108,9 +110,25 @@ export async function createMeeting(_: unknown, formData: FormData): Promise<Act
     max_attendees: Number(formData.get('max_attendees')) || 15,
     status: 'upcoming',
     is_highlight: formData.get('is_highlight') === 'on',
-  })
+    leader_id,
+    notice
+  }
 
-  if (error) return { success: false, error: '저장에 실패했어요' }
+  let { error } = await supabase.from('meetings').insert(insertPayload)
+
+  if (error) {
+    console.warn("Inserting with leader_id/notice failed, retrying with basic columns:", error.message)
+    // Retry with only default columns
+    const retryPayload = { ...insertPayload }
+    delete retryPayload.leader_id
+    delete retryPayload.notice
+
+    const { error: retryError } = await supabase.from('meetings').insert(retryPayload)
+    if (retryError) {
+      console.error("Retry insert failed:", retryError.message)
+      return { success: false, error: '저장에 실패했어요' }
+    }
+  }
 
   revalidatePath('/')
   return { success: true }
