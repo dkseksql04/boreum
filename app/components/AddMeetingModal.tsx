@@ -9,16 +9,49 @@ type Book = { id: string; title: string }
 export default function AddMeetingModal({ books }: { books: Book[] }) {
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const [memberRole, setMemberRole] = useState<string>("멤버")
   const [state, action, pending] = useActionState(createMeeting, { success: false })
 
-  // Monitor Auth state to supply leader_id
+  const fetchMemberRole = async (currentUser: any) => {
+    try {
+      const emailPrefix = currentUser.email?.split("@")[0] || "";
+      const { data, error } = await supabase
+        .from("members")
+        .select("role")
+        .eq("name", emailPrefix)
+        .single();
+
+      if (!error && data?.role) {
+        setMemberRole(data.role);
+      } else {
+        setMemberRole("멤버");
+      }
+    } catch (e) {
+      console.warn("Failed to fetch member role in AddMeetingModal:", e);
+      setMemberRole("멤버");
+    }
+  };
+
+  // Monitor Auth state to supply leader_id and fetch role
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      const activeUser = session?.user ?? null;
+      setUser(activeUser);
+      if (activeUser) {
+        fetchMemberRole(activeUser);
+      } else {
+        setMemberRole("멤버");
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const activeUser = session?.user ?? null;
+      setUser(activeUser);
+      if (activeUser) {
+        fetchMemberRole(activeUser);
+      } else {
+        setMemberRole("멤버");
+      }
     });
 
     return () => {
@@ -66,6 +99,19 @@ export default function AddMeetingModal({ books }: { books: Book[] }) {
               {!user && (
                 <div className="p-3 bg-white/50 border border-black/10 rounded-xl text-[10px] font-bold text-[#203D39] leading-relaxed">
                   ⚠️ 로그인되어 있지 않아 '게스트' 권한으로 모임이 생성됩니다. 로그인 후 개설하시면 모임장 전용 관리 기능을 쓰실 수 있습니다.
+                </div>
+              )}
+
+              {user && (memberRole === "운영진" || memberRole === "모임장") && (
+                <div className="p-3 bg-[#142825] text-[#BDF1E7] border-2 border-black rounded-xl text-[10px] font-bold leading-relaxed flex items-center gap-1.5 animate-fadeIn">
+                  <span>👑</span>
+                  <span><strong>{user.email?.split('@')[0]}님</strong> ({memberRole} 권한): 모임 개설 및 공지사항 등록 권한이 활성화되었습니다.</span>
+                </div>
+              )}
+
+              {user && memberRole !== "운영진" && memberRole !== "모임장" && (
+                <div className="p-3 bg-red-50 border-2 border-red-450 rounded-xl text-[10px] font-bold text-red-650 leading-relaxed animate-fadeIn">
+                  ⚠️ <strong>{user.email?.split('@')[0]}님</strong> (일반 멤버): 일반 멤버는 모임을 새로 개설할 권한이 없습니다. 모임장/운영진 계정으로 로그인해 주세요.
                 </div>
               )}
 
@@ -151,10 +197,10 @@ export default function AddMeetingModal({ books }: { books: Book[] }) {
 
               <button
                 type="submit"
-                disabled={pending}
+                disabled={pending || (user && memberRole !== "운영진" && memberRole !== "모임장")}
                 className="w-full py-3.5 bg-black text-[#BDF1E7] border-2 border-black rounded-xl font-extrabold text-[10px] tracking-widest uppercase hover:bg-black/90 active:scale-[0.98] transition-all disabled:opacity-60 cursor-pointer mt-2"
               >
-                {pending ? '저장 중...' : '새로운 모임 개설하기'}
+                {pending ? '저장 중...' : (user && memberRole !== "운영진" && memberRole !== "모임장" ? '모임 개설 권한 없음' : '새로운 모임 개설하기')}
               </button>
             </form>
           </div>
