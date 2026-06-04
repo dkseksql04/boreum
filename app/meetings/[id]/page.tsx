@@ -2,7 +2,10 @@ import { Suspense } from "react";
 import MeetingDetailClient from "@/app/components/MeetingDetailClient";
 
 export const unstable_instant = {
-  prefetch: 'static',
+  prefetch: 'runtime',
+  samples: [
+    { params: { id: 'demian' } }
+  ]
 };
 
 interface PageProps {

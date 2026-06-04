@@ -67,11 +67,14 @@ export default async function ScheduleSection() {
                     </div>
 
                     {/* Details Info */}
-                    <div className="flex-1 min-w-0 md:pl-8 md:border-l border-[#142825]/12">
+                    <Link
+                      href={`/meetings/${meeting.id}`}
+                      className="flex-1 min-w-0 md:pl-8 md:border-l border-[#142825]/12 group cursor-pointer block"
+                    >
                       <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-                        <Link href={`/meetings/${meeting.id}`} className="hover:underline">
-                          <h3 className="font-bold text-base text-[#142825] tracking-tight">{meeting.title}</h3>
-                        </Link>
+                        <h3 className="font-bold text-base text-[#142825] tracking-tight group-hover:text-[#1D9E75] transition-colors duration-200">
+                          {meeting.title}
+                        </h3>
                         {done && <span className="px-2 py-0.5 text-[9px] font-bold bg-[#142825]/10 text-[#142825]/70 rounded-full border border-[#142825]/15">완료</span>}
                         {highlight && (
                           <span className="px-2.5 py-0.5 text-[9px] font-bold bg-[#142825] text-[#BDF1E7] rounded-full flex items-center gap-1.5 uppercase tracking-wider border border-[#142825]">
@@ -80,7 +83,11 @@ export default async function ScheduleSection() {
                           </span>
                         )}
                       </div>
-                      {book && <p className="text-xs font-semibold mb-2.5 literary flex items-center gap-1.5 text-[#142825]/85">📖 {book.title}</p>}
+                      {book && (
+                        <p className="text-xs font-semibold mb-2.5 literary flex items-center gap-1.5 text-[#142825]/85 group-hover:text-[#1D9E75]/90 transition-colors duration-200">
+                          📖 {book.title}
+                        </p>
+                      )}
                       <div className="flex flex-wrap gap-4 text-xs font-semibold text-[#142825]/55">
                         <span className="flex items-center gap-1.5">
                           <svg className="w-3.5 h-3.5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,7 +105,7 @@ export default async function ScheduleSection() {
                           </span>
                         )}
                       </div>
-                    </div>
+                    </Link>
                   </div>
 
                   {/* Actions */}

@@ -39,6 +39,9 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+section[id] {
+  scroll-margin-top: 200px; /* Offset for the 4-tier fixed navbar height (~191px) */
+}
 
 body {
   background: var(--background);

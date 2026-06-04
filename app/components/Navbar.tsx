@@ -103,16 +103,19 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <button 
-              onClick={() => setIsLoginOpen(true)}
+            <Link 
+              href="/login"
               className="text-black font-extrabold hover:text-black/70 transition-colors cursor-pointer"
             >
               로그인
-            </button>
+            </Link>
           )}
-          <button className="px-3.5 py-1.5 bg-black text-[#BDF1E7] border border-black hover:bg-black/90 hover:scale-[1.02] active:scale-[0.98] transition-all rounded-full font-extrabold cursor-pointer text-[9px] leading-none">
+          <Link 
+            href="/meetings/create"
+            className="px-3.5 py-1.5 bg-black text-[#BDF1E7] border border-black hover:bg-black/90 hover:scale-[1.02] active:scale-[0.98] transition-all rounded-full font-extrabold cursor-pointer text-[9px] leading-none block text-center"
+          >
             모임 참여
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -282,19 +285,21 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <button 
-                onClick={() => {
-                  setOpen(false);
-                  setIsLoginOpen(true);
-                }}
-                className="flex-1 py-2.5 text-[10px] font-bold text-black/70 border border-black/20 rounded-xl hover:bg-slate-50 transition-colors uppercase tracking-widest cursor-pointer"
+              <Link 
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="flex-1 py-2.5 text-[10px] font-bold text-black/70 border border-black/20 rounded-xl hover:bg-slate-50 transition-colors uppercase tracking-widest cursor-pointer text-center block"
               >
                 로그인
-              </button>
+              </Link>
             )}
-            <button className="flex-1 py-2.5 text-[10px] font-bold bg-black text-white rounded-xl hover:bg-black/90 transition-colors uppercase tracking-widest cursor-pointer">
+            <Link 
+              href="/meetings/create"
+              onClick={() => setOpen(false)}
+              className="flex-1 py-2.5 text-[10px] font-bold bg-black text-[#BDF1E7] rounded-xl hover:bg-black/90 transition-colors uppercase tracking-widest cursor-pointer text-center block"
+            >
               모임 참여
-            </button>
+            </Link>
           </div>
         </div>
       )}

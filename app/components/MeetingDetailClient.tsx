@@ -155,7 +155,7 @@ export default function MeetingDetailClient({ id }: { id: string }) {
       setLoading(true);
     }
     fetchMeetingInfo();
-  }, [id, meeting]);
+  }, [id]);
 
   // Initialize announcements and join status from localStorage/meta cache
   useEffect(() => {
@@ -273,7 +273,7 @@ export default function MeetingDetailClient({ id }: { id: string }) {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#BDF1E7] pt-32 pb-24 px-8 text-[#142825] animate-fadeIn">
+      <main className="min-h-screen bg-[#BDF1E7] pt-52 pb-24 px-8 text-[#142825] animate-fadeIn">
         
         {/* Dynamic background decorations */}
         <div className="absolute -left-12 top-48 w-80 h-80 rounded-full border border-[#142825]/5 pointer-events-none z-0" />
