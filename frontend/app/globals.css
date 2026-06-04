@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+:root {
+  --mint: #BDF1E7;
+  --mint-50: #F2FCFA;
+  --mint-100: #E1FAF5;
+  --mint-200: #BDF1E7;
+  --mint-600: #1E9E8B;
+  --mint-700: #197E6F;
+  --background: #BDF1E7; /* Representative brand color as solid background */
+  --surface: #FFFFFF;
+  --foreground: #142825;
+  --muted: #557A74;
+  --border: #DFF7F3;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-mint: var(--mint);
+  --color-muted: var(--muted);
+  
+  --color-teal-50: #F2FCFA;
+  --color-teal-100: #E1FAF5;
+  --color-teal-200: #BDF1E7;
+  --color-teal-300: #8EE6D6;
+  --color-teal-400: #55D2BE;
+  --color-teal-500: #28BCA6;
+  --color-teal-600: #1E9E8B;
+  --color-teal-700: #197E6F;
+  --color-teal-800: #156358;
+  --color-teal-900: #125249;
+  --color-teal-950: #08302A;
+
+  --font-serif: "Noto Serif KR", Georgia, serif;
+  --font-sans: "Pretendard", "Apple SD Gothic Neo", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.fade-up { animation: fadeInUp 0.6s ease-out forwards; }
+.animate-fadeIn { animation: fadeIn 0.25s ease-out forwards; }
+.animate-scaleUp { animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+.delay-1 { animation-delay: 0.1s; opacity: 0; }
+.delay-2 { animation-delay: 0.22s; opacity: 0; }
+.delay-3 { animation-delay: 0.34s; opacity: 0; }
+.delay-4 { animation-delay: 0.46s; opacity: 0; }
+
+
+.literary {
+  font-family: "Noto Serif KR", Georgia, serif;
+  letter-spacing: 0.02em;
+  line-height: 1.9;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #F2FCFA; }
+::-webkit-scrollbar-thumb { background: #55D2BE; border-radius: 3px; }
